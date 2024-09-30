@@ -1,0 +1,20 @@
+{{- template "common.deployment" (list . "demo.deployment") -}}
+{{- define "demo.deployment" -}}
+## Define overrides for your Deployment resource here, e.g.
+apiVersion: apps/v1
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "demo.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "demo.selectorLabels" . | nindent 8 }}
+
+{{- end -}}
+
+{{- define "demo.selectorLabels" -}}
+app: my-application
+release: {{ .Release.Name }}
+{{- end -}}
