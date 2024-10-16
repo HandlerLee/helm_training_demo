@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-configuration" (include "standard-application.fullname" .) }}
+  namespace: {{ include "standard-application.names.namespace" . | quote }}
+  labels: {{- include "standard-application.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    env: {{ include "common.utils.getenv" . }}{{ .Values.configmap.customLabels | toYaml | nindent 4 }}
+    {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  data:
+    {{- with .Values.configmap.fileName }}
+    {{- include "configmap-properties.filedata" (dict "ConfigMapName" . "Root" $) }}
+    {{- end }}
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-configfiles" (include "standard-application.fullname" .) }}
+  {{- include "standard-application.labels" . | nindent 2 }}
+data: {{ (.Files.Glob "files/configfiles/*").AsConfig | nindent 2 }}

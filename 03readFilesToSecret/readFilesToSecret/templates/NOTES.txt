@@ -1,0 +1,19 @@
+Opaque：这是默认的 Secret 类型，用于存储少量敏感数据。这类 Secret 没有特定的格式，可以包含任意的键值对。
+
+kubernetes.io/service-account-token：这种类型的 Secret 包含了服务账户的 API 访问令牌。当创建一个新的服务账户时，Kubernetes 会自动创建一个相应的 Secret，并且将其与账户关联。
+
+kubernetes.io/dockerconfigjson：用于存储私有 Docker 注册表的认证信息。这种类型的 Secret 可以被用来让 Pod 能够拉取私有镜像。
+
+kubernetes.io/basic-auth：用于存储用于基础认证的用户名和密码。
+
+kubernetes.io/ssh-auth：用于存储 SSH 密钥，格式为 username:ssh_key。
+
+kubernetes.io/tls：用于存储 TLS 证书和私钥。
+
+bootstrap.kubernetes.io/token：用于存储用于节点启动和加入集群的令牌。
+
+kubernetes.io/service-account-issuer：用于存储服务账户令牌的发行者信息。
+
+kubernetes.io/cert-manager：Cert-Manager 使用的 Secret 类型，用于存储 TLS 证书。
+
+kubernetes.io/ingress-tls：用于存储 Ingress 资源的 TLS 证书。
