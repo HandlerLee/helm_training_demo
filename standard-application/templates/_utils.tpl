@@ -1,3 +1,8 @@
+{{/*
+Print env from fil eks namespace.
+Usage:
+{{ include "common.utils.getenv" . }
+*/}}
 {{- define "common.utils.getenv" -}}
 {{- if contains .Release.Namespace "-" -}}
 {{- $list := splitList "-" .Release.Namespace -}}

@@ -5,9 +5,6 @@ metadata:
   namespace: {{ include "standard-application.names.namespace" . | quote }}
   labels: {{- include "standard-application.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
     env: {{ include "common.utils.getenv" . }}{{ .Values.configmap.customLabels | toYaml | nindent 4 }}
-    {{- if .Values.commonAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-  {{- end }}
   data:
     {{- with .Values.configmap.fileName }}
     {{- include "configmap-properties.filedata" (dict "ConfigMapName" . "Root" $) }}

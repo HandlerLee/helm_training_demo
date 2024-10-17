@@ -36,7 +36,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env: {{ range $key, $val := .Values.deployment.env }}
             - name: {{ $key }}
-              value: {{ $val | quote }}{{ end }}{{- include "standard-application.deployment.properties.env" . | nindent 12 }}
+              value: {{ $val | quote }}{{- end }}
+            {{- include "standard-application.deployment.properties.env" . | nindent 12 }}
+            {{- include "standard-application.deployment.env.secret" . | nindent 12 }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
