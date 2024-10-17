@@ -16,7 +16,7 @@ image:
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # This is to override the chart name.
-nameOverride: ""
+nameOverride: "fdal-api"
 fullnameOverride: ""
 
 ## @param commonLabels Labels to add to all deployed objects
@@ -138,12 +138,6 @@ volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
 
 
 configmap:

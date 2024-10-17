@@ -4,7 +4,7 @@ Usage:
 {{ include "common.utils.getenv" . }
 */}}
 {{- define "common.utils.getenv" -}}
-{{- if contains .Release.Namespace "-" -}}
+{{- if contains "-" .Release.Namespace -}}
 {{- $list := splitList "-" .Release.Namespace -}}
 {{- $lastIndex := sub (len $list) 1 -}}
 {{- index $list $lastIndex -}}
