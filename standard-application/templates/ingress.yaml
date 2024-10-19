@@ -24,8 +24,9 @@ spec:
     {{- end }}
   {{- end }}
   rules:
+    {{- $env := include "common.utils.getenv" . -}}
     {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: {{ .host | replace "ENV" $env | quote }}
       http:
         paths:
           {{- range .paths }}
