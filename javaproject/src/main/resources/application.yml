@@ -1,0 +1,16 @@
+spring:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    lettuce:
+      pool:
+        max-active: ${REDIS_MAX_ACTIVE:10}
+        max-idle: ${REDIS_MAX_IDLE:5}
+        min-idle: ${REDIS_MIN_IDLE:1}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info

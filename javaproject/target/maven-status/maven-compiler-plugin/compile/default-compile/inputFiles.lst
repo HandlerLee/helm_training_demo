@@ -1,1 +1,3 @@
-/Users/onepiece/helm_training_demo/javaproject/src/main/java/com/example/k8sdemo/K8sDemoApplication.java
+/Users/onepiece/githubwork/helm_training_demo/javaproject/src/main/java/com/example/k8sdemo/CustomHealthIndicator.java
+/Users/onepiece/githubwork/helm_training_demo/javaproject/src/main/java/com/example/k8sdemo/HelloController.java
+/Users/onepiece/githubwork/helm_training_demo/javaproject/src/main/java/com/example/k8sdemo/Config.java
