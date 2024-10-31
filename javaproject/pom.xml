@@ -39,12 +39,12 @@
         <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
-    <!-- Sentinel (replace with Open Source Sentinel) -->
-    <dependency>
-        <groupId>com.alibaba.csp</groupId>
-        <artifactId>sentinel-core</artifactId>
-        <version>1.8.2</version> <!-- Use the latest stable version -->
-    </dependency>
+    <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
 </dependencies>
 
     

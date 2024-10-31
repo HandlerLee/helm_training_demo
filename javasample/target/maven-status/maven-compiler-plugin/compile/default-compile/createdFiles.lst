@@ -1,0 +1,4 @@
+com/example/redisk8sdemo/health/RedisHealthIndicator.class
+com/example/redisk8sdemo/controller/TestController.class
+com/example/redisk8sdemo/config/RedisConfig.class
+com/example/redisk8sdemo/RedisK8sDemoApplication.class
