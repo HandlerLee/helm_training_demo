@@ -20,6 +20,8 @@ public class RedisHealthIndicator implements HealthIndicator {
         try {
             RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
             String result = connection.ping();
+            connection.close();
+            
             if ("PONG".equals(result)) {
                 return Health.up()
                     .withDetail("redis", "Redis is responding")
@@ -31,8 +33,8 @@ public class RedisHealthIndicator implements HealthIndicator {
             }
         } catch (Exception e) {
             return Health.down()
-                .withDetail("redis", "Redis is down")
-                .withException(e)
+                .withDetail("redis", "Redis connection failed")
+                .withDetail("error", e.getMessage())
                 .build();
         }
     }

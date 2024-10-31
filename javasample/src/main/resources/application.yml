@@ -1,12 +1,12 @@
 redis:
   sentinel:
     master: ${REDIS_MASTER:mymaster}
-    nodes: ${REDIS_SENTINEL_NODES:redis-headless:26379}
-    password: ${REDIS_SENTINEL_PASSWORD:abcd}
+    nodes: ${REDIS_SENTINEL_NODES:redis-headless.redis.svc.cluster.local:26379}
   password: ${REDIS_PASSWORD:abcd}
 
 server:
   port: 8080
+  shutdown: graceful
 
 management:
   endpoints:
@@ -18,8 +18,33 @@ management:
       show-details: always
       probes:
         enabled: true
+      group:
+        readiness:
+          include: redis
+        liveness:
+          include: ping
   health:
-    livenessState:
+    livenessstate:
       enabled: true
-    readinessState:
+    readinessstate:
       enabled: true
+
+spring:
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+      password: ${REDIS_PASSWORD:abcd}
+      sentinel:
+        master: ${REDIS_MASTER:mymaster}
+        nodes: ${REDIS_SENTINEL_NODES:redis-headless.redis.svc.cluster.local:26379}
+        password: ${REDIS_PASSWORD:abcd}
+
+logging:
+  level:
+    org.springframework.boot.actuate.health: DEBUG
+    com.example.redisk8sdemo.health: DEBUG

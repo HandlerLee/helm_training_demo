@@ -19,7 +19,7 @@ public class RedisConfig {
     private String master;
 
     @Value("${redis.sentinel.nodes}")
-    private String sentinelNodes;
+    private String sentinelNodes = "redis-headless.redis.svc.cluster.local:26379";
 
     @Value("${redis.password}")
     private String password;
@@ -36,14 +36,16 @@ public class RedisConfig {
             sentinelConfig.sentinel(hostAndPort[0], Integer.parseInt(hostAndPort[1]));
         }
         
-        // Set Redis password
+        // Set both Redis and Sentinel passwords
         sentinelConfig.setPassword(RedisPassword.of(password));
+        sentinelConfig.setSentinelPassword(RedisPassword.of(password));
         
-        // Configure Lettuce client to use RESP2
+        // Configure Lettuce client
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
             .clientOptions(ClientOptions.builder()
                 .protocolVersion(ProtocolVersion.RESP2)
                 .build())
+            .commandTimeout(java.time.Duration.ofSeconds(10))
             .build();
 
         return new LettuceConnectionFactory(sentinelConfig, clientConfig);
@@ -57,7 +59,6 @@ public class RedisConfig {
         template.setValueSerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setHashValueSerializer(new StringRedisSerializer());
-        template.setEnableTransactionSupport(true);
         template.afterPropertiesSet();
         return template;
     }
