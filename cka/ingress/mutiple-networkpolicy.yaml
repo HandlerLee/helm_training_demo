@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: multiple-ingress-policy
+  namespace: your-namespace
+spec:
+  podSelector:
+    matchLabels:
+      app: your-app
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+    - namespaceSelector:
+        matchLabels:
+          name: allowed-namespace
+    ports:
+    - protocol: TCP
+      port: 80
+  - from:
+    - podSelector:
+        matchLabels:
+          role: backend
+    ports:
+    - protocol: TCP
+      port: 443
+  egress:
+  - from:
+    
