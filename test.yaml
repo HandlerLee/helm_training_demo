@@ -1,0 +1,234 @@
+---
+# Source: standard-application/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shareclass-fdal-api
+  labels:
+    helm.sh/chart: standard-application-0.1.0
+    app.kubernetes.io/name: fdal-api
+    app.kubernetes.io/instance: shareclass
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: true
+---
+# Source: standard-application/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shareclass-fdal-api-configuration
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: shareclass
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: fdal-api
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: standard-application-0.1.0
+    env: default
+    
+  data:
+    property1: "value1"
+    property2: "value2"
+    property3: "value3"
+---
+# Source: standard-application/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shareclass-fdal-api-configfiles
+  helm.sh/chart: standard-application-0.1.0
+  app.kubernetes.io/name: fdal-api
+  app.kubernetes.io/instance: shareclass
+  app.kubernetes.io/version: "1.16.0"
+  app.kubernetes.io/managed-by: Helm
+data: 
+  .npmrc: |-
+    registry=https://registry.npmjs.org/
+    loglevel=warn
+    save-exact=true
+---
+# Source: standard-application/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: shareclass-fdal-api
+  labels:
+    helm.sh/chart: standard-application-0.1.0
+    app.kubernetes.io/name: fdal-api
+    app.kubernetes.io/instance: shareclass
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: fdal-api
+    app.kubernetes.io/instance: shareclass
+    env: default
+---
+# Source: standard-application/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shareclass-fdal-api
+  labels:
+    app.kubernetes.io/instance: shareclass
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: fdal-api
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: standard-application-0.1.0
+    env: default
+    
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fdal-api
+      app.kubernetes.io/instance: shareclass
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: standard-application-0.1.0
+        app.kubernetes.io/name: fdal-api
+        app.kubernetes.io/instance: shareclass
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      serviceAccountName: shareclass-fdal-api
+      securityContext:
+        {}
+      containers:
+        - name: standard-application
+          securityContext:
+            {}
+          image: "nginx:1.16.0"
+          imagePullPolicy: IfNotPresent
+          env: 
+            - name: http_proxy
+              value: "http://proxy.example.com"
+            - name: https_proxy
+              value: "http://proxy.example.com"
+            - name: PROPERTY1
+              valueFrom:
+                configMapKeyRef:
+                  name: shareclass-fdal-api -configuration
+                  key: "property1" 
+            - name: PROPERTY2
+              valueFrom:
+                configMapKeyRef:
+                  name: shareclass-fdal-api -configuration
+                  key: "property2" 
+            - name: PROPERTY3
+              valueFrom:
+                configMapKeyRef:
+                  name: shareclass-fdal-api -configuration
+                  key: "property3"
+            - name: KEYNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret-name
+                  key: keyname
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+---
+# Source: standard-application/templates/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: shareclass-fdal-api
+  labels:
+    helm.sh/chart: standard-application-0.1.0
+    app.kubernetes.io/name: fdal-api
+    app.kubernetes.io/instance: shareclass
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: shareclass-fdal-api
+  minReplicas: 1
+  maxReplicas: 100
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
+# Source: standard-application/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shareclass-fdal-api
+  labels:
+    helm.sh/chart: standard-application-0.1.0
+    app.kubernetes.io/name: fdal-api
+    app.kubernetes.io/instance: shareclass
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "chart-example-default.local"
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: shareclass-fdal-api
+                port:
+                  number: 80
+---
+# Source: standard-application/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "shareclass-fdal-api-test-connection"
+  labels:
+    helm.sh/chart: standard-application-0.1.0
+    app.kubernetes.io/name: fdal-api
+    app.kubernetes.io/instance: shareclass
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['shareclass-fdal-api:80']
+  restartPolicy: Never

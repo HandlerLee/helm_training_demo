@@ -4,7 +4,8 @@ metadata:
   name: {{ printf "%s-configuration" (include "standard-application.fullname" .) }}
   namespace: {{ include "standard-application.names.namespace" . | quote }}
   labels: {{- include "standard-application.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
-    env: {{ include "common.utils.getenv" . }}{{ .Values.configmap.customLabels | toYaml | nindent 4 }}
+    env: {{ include "common.utils.getenv" . }}
+    {{- include "standard-application.labels.custom" .Values.configmap.customLabels | nindent 4 }}
   data:
     {{- with .Values.configmap.fileName }}
     {{- include "configmap-properties.filedata" (dict "ConfigMapName" . "Root" $) }}

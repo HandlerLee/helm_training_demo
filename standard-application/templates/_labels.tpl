@@ -37,3 +37,13 @@ app.kubernetes.io/name: {{ include "standard-application.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Custom labels with null check
+*/}}
+{{- define "standard-application.labels.custom" -}}
+{{- if . -}}
+{{ toYaml . }}
+{{- end -}}
+{{- end -}}

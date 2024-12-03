@@ -3,7 +3,8 @@ kind: Deployment
 metadata:
   name: {{ include "standard-application.fullname" . }}
   labels: {{- include "standard-application.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
-    env: {{ include "common.utils.getenv" . }}{{ .Values.configmap.customLabels | toYaml | nindent 4 }}
+    env: {{ include "common.utils.getenv" . }}
+    {{- include "standard-application.labels.custom" .Values.configmap.customLabels | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -53,6 +54,11 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          lifecycle:
+            {{- with .Values.deployment.lifecycle.preStop }}
+            preStop:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

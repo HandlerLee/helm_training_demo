@@ -142,8 +142,6 @@ volumeMounts: []
 
 configmap:
   customLabels:
-    custom-label: "custom-value"
-    custom-label-2: "custom-value-2"
   fileName: "files/myconfig.properties"
   annotations:
     custom-annotation: "custom-annotation-value"
@@ -151,6 +149,11 @@ configmap:
 
 
 deployment:
+  terminationGracePeriodSeconds: 300
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 10"]
   env:
     http_proxy: "http://proxy.example.com"
     https_proxy: "http://proxy.example.com"
